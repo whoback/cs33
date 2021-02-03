@@ -1,12 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Search</title>
-    </head>
-    <body>
-        <form action="https://google.com/search">
-            <input type="text" name="q">
-            <input type="submit" value="Google Search">
-        </form>
-    </body>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <title>Search</title>
+  </head>
+  <body>
+    <div class="container">
+      <ul class="nav justify-content-end">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="index.html"
+            >Search</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="img.html">Image Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="adv.html">Advanced Search</a>
+        </li>
+      </ul>
+      <div class="row">
+        <div class="row justify-content-center">
+          <div class="col-auto mb-3">
+
+            <img src="https://placekitten.com/272/92" alt="" />
+          </div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <div class="mb-3">
+          <form action="https://google.com/search">
+            <input class="form-control" type="text" name="q" />
+        </div>
+            <div class="row justify-content-center">
+              <div class="col-auto">
+                  <div class="mb-3">
+                <input type="submit" value="Google Search" />
+            </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+    </div>
+  </body>
 </html>
