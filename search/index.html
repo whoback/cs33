@@ -16,36 +16,38 @@
   </head>
   <body>
     <div class="container">
-      <ul class="nav justify-content-end">
+      <ul class="nav justify-content-end mb-5">
+        
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="index.html"
-            >Search</a
-          >
+          <a class="nav-link small text-secondary" href="img.html">Image Search</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="img.html">Image Search</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="adv.html">Advanced Search</a>
+          <a class="nav-link small text-secondary" href="adv.html">Advanced Search</a>
         </li>
       </ul>
       <div class="row">
         <div class="row justify-content-center">
-          <div class="col-auto mb-3">
+          <div class="col-auto mb-5">
 
-            <img src="https://placekitten.com/272/92" alt="" />
+            <img src="img/glogo.png" alt="Google logo" />
           </div>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-            <div class="mb-3">
+            <div class="mb-4">
           <form action="https://google.com/search">
-            <input class="form-control" type="text" name="q" />
+            <input class="form-control" type="text" name="q" style="border-radius: 1.25rem;"/>
         </div>
             <div class="row justify-content-center">
               <div class="col-auto">
                   <div class="mb-3">
-                <input type="submit" value="Google Search" />
+                <input type="submit" value="Google Search" class="border-0 small p-2 light text-secondary" style="
+                background-color: #f8f9fa;border-radius: 4px;
+            " />                
+                <input type="submit" name="btnI" value="I'm Feeling Lucky" class="border-0 small p-2 light text-secondary" style="
+                background-color: #f8f9fa;border-radius: 4px;
+            " />
+
             </div>
               </div>
             </div>
