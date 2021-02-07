@@ -1,12 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Search</title>
-    </head>
-    <body>
-        <form action="https://google.com/search">
-            <input type="text" name="q">
-            <input type="submit" value="Google Search">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <title>Search</title>
+  </head>
+  <body>
+    <div class="container">
+      <ul class="nav justify-content-end mb-5">
+        <li class="nav-item">
+          <a class="nav-link small text-secondary" href="index.html"
+            >Back to Google Search</a
+          >
+        </li>
+      </ul>
+      <div class="row">
+        <h3 class="text-danger">Advanced Search</h3>
+        <hr />
+      </div>
+      <div class="row">
+        <form action="">
+          <div class="row mb-3">
+            <div class="col-sm-2">Find pages with...</div>
+            <div class="col-sm-6"></div>
+            <div class="col-sm-2 small fw-bolder text-secondary">
+              To do this in the search box
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label
+              for="colFormLabelSm"
+              class="col-sm-2 col-form-label col-form-label-sm"
+              >all these words:
+            </label>
+            <div class="col-sm-6">
+              <input
+                type="email"
+                class="form-control form-control-sm"
+                id="colFormLabelSm"
+              />
+            </div>
+            <div class="col-sm-3 small text-secondary">
+              Type the important words:
+              <span class="small font-monospace text-secondary"
+                >tricolor rat terrier</span
+              >
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label
+              for="colFormLabelSm"
+              class="col-sm-2 col-form-label col-form-label-sm"
+              >this exact word or phrase:</label
+            >
+            <div class="col-sm-6">
+              <input
+                type="email"
+                class="form-control form-control-sm"
+                id="colFormLabelSm"
+              />
+            </div>
+            <div class="col-sm-3 small text-secondary">
+              Put exact words in quotes:
+              <span class="small font-monospace text-secondary"
+                >"rat terrier"
+              </span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label
+              for="colFormLabelSm"
+              class="col-sm-2 col-form-label col-form-label-sm"
+              >any of these words:</label
+            >
+            <div class="col-sm-6">
+              <input
+                type="email"
+                class="form-control form-control-sm"
+                id="colFormLabelSm"
+              />
+            </div>
+            <div class="col-sm-3 small text-secondary">
+              Type OR between all the words you want:
+              <span class="small font-monospace text-secondary"
+                >miniature OR standard</span
+              >
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label
+              for="colFormLabelSm"
+              class="col-sm-2 col-form-label col-form-label-sm"
+              >none of these words:</label
+            >
+            <div class="col-sm-6">
+              <input
+                type="email"
+                class="form-control form-control-sm"
+                id="colFormLabelSm"
+              />
+            </div>
+            <div class="col-sm-3 small text-secondary">
+              Put a minus sign just before words you don't want:<span
+                class="small text-secondary font-monospace"
+              >
+                -rodent, -"Jack Russell"</span
+              >
+            </div>
+          </div>
         </form>
-    </body>
+        <hr />
+        <div class="row">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-6 text-end">
+            <input
+              type="button"
+              value="Advanced Search"
+              class="btn btn-primary btn-sm"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
