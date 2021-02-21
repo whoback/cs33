@@ -19,6 +19,10 @@ class Form2(forms.Form):
         attrs={'class': 'content', 'placeholder': 'Article Content'}), label='')
 
 
+class Form3(forms.Form):
+    textarea = forms.CharField(widget=forms.Textarea(), label='')
+
+
 def index(request):
     query = list()
     queries = util.list_entries()
@@ -107,3 +111,24 @@ def newpage(request):
             "form": Search(),
             "form2": Form2()
         })
+
+
+def editpage(request, title):
+    if request.method == 'GET':
+        article = util.get_entry(title)
+
+        return render(request, 'encyclopedia/editpage.html',
+                      {'form': Search(),
+                       'form3': Form3(initial={'textarea': article}),
+                       'title': title})
+    else:
+        form = Form3(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['textarea']
+            util.save_entry(title, content)
+            re = markdowner.convert(util.get_entry(title))
+            return render(request, "encyclopedia/entry.html", {
+                "entry": re,
+                "title": title,
+                "form": Search()
+            })
