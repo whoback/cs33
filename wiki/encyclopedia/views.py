@@ -24,31 +24,29 @@ class Form3(forms.Form):
 
 
 def index(request):
-    query = list()
+    query = []
     queries = util.list_entries()
     if request.method == 'POST':
         form = Search(request.POST)
         if form.is_valid():
             title = form.cleaned_data["title"]
-            for q in queries:
-                if title in queries:
-                    re = markdowner.convert(util.get_entry(title))
-                    return render(request, "encyclopedia/entry.html", {
-                        "entry": re,
-                        "title": title,
-                        "form": form
-                    })
-                if title.lower() in q.lower():
-                    query.append(q)
-                    return render(request, "encyclopedia/search.html", {
-                        "query": query,
-                        "title": title,
-                        "form": Search()
-                    })
-                else:
-                    return render(request, 'encyclopedia/404.html', {
-                        "form": Search()
-                    })
+            if util.get_entry(title) is not None:
+                re = markdowner.convert(util.get_entry(title))
+                return render(request, "encyclopedia/entry.html", {
+                    "entry": re,
+                    "title": title,
+                    "form": form
+                })
+            else:
+                for q in queries:
+                    if title.lower() in q.lower():
+                        query.append(q)
+                return render(request, "encyclopedia/search.html", {
+                    "query": query,
+                    "title": title,
+                    "form": Search()
+                })
+
         else:
             return render(request, "encyclopedia/index.html", {
                 "form": form

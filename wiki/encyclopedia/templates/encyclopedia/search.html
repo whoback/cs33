@@ -8,7 +8,5 @@
 <h1>Search Results</h1>
     {% for title in query %}
     <li><a href=/wiki/{{title}}>{{title}}</a></li>
-    {% empty %}
-    <h1>No item</h1>
-    {% endfor %}
+    {%endfor%}
 {% endblock %}
