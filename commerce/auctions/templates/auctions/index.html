@@ -1,30 +1,36 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+<h2>Active Listings</h2>
 
-    <div class="row">
-        {% for listing in listings %}
+<div class="row">
+    {% for listing in listings %}
     <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <div class="card p-2"  style="width: 18rem;">
-                    {% if listing.image_url %}
-                    <img class="card-img-top" style="padding: 10px;" src="{{ listing.image_url }}" alt="No image available">
-                    {% else %}
-                    <img class="card-img-top" style="padding: 10px;" src="http://www.placekitten.com/270/270" alt="placeholder image">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ listing.title }}</h5>
-                        <p class="card-text">{{ listing.description }}</p>
-                        <strong>Price: $</strong>{{ listing.starting_bid }}
-                        <br>
-                        <strong>Created By: </strong>{{listing.listed_by}}
-                        <br>
-                        <strong>Created At: </strong>{{listing.date_listed}}
-                        <br>
-                        <a href="/listing/{{ listing.id }}" class="btn btn-primary">Click to bid</a>
-                    </div>
+        <div class="card p-2" style="width: 18rem;">
+            {% if listing.image_url %}
+            <a href="/listing/{{ listing.id }}" class="">
+                <img class="card-img-top" style="padding: 10px;" src="{{ listing.image_url }}" alt="No image available">
+            </a>
+            {% else %}
+            <a href="/listing/{{ listing.id }}" class="">
+
+                <img class="card-img-top" style="padding: 10px;" src="http://www.placekitten.com/270/270"
+                    alt="placeholder image">
+            </a>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description }}</p>
+                <strong>Price: $</strong>{{ listing.starting_bid }}
+                <br>
+                <strong>Created By: </strong>{{listing.listed_by}}
+                <br>
+                <strong>Created At: </strong>{{listing.date_listed}}
+                <br>
+                <a href="/listing/{{ listing.id }}" class="btn btn-primary">Click to bid</a>
             </div>
         </div>
-    {% endfor %}
     </div>
+    {% endfor %}
+</div>
 {% endblock %}
