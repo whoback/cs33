@@ -5,7 +5,15 @@
 <div class="container">
     <div class="productdetailbox">
         <h2>Listing: {{listing.title}}</h2>
-
+        <form action="{% url 'watchlist' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{listing.id}}">
+            {% if watched %}
+            <input class="btn btn-primary" type="submit" value="Remove from Watchlist">
+            {% else %}
+            <input class="btn btn-primary" type="submit" value="Add to Watchlist">
+            {% endif %}
+        </form>
         <div class="col-xs-12 fig">
             {% if listing.image_url %}
             <img src="{{listing.image_url}}" style="height: 250px; border: 2px solid black; border-radius: 4px;"

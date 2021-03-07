@@ -28,3 +28,9 @@ class Comment(models.Model):
     comment_by = models.ForeignKey(User, on_delete=models.CASCADE)
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
     comment = models.TextField()
+
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    watch_bool = models.BooleanField(default=True)

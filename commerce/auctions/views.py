@@ -85,6 +85,39 @@ def create(request):
 
 @login_required(login_url='/login/')
 def listing(request, id):
-    listing = Listing.objects.get(id=id)
+    user = User.objects.get(username=request.user.username)
 
-    return render(request, 'auctions/listing.html', {'listing': listing})
+    listing = Listing.objects.get(id=id)
+    is_in_watchlist = Watchlist.objects.filter(listing_id=listing, user=user)
+    watched = False
+    try:
+        watched = is_in_watchlist[0].is_in_watchlist
+    except:
+        pass
+
+    return render(request, 'auctions/listing.html', {'listing': listing, 'watched': watched})
+
+
+@login_required(login_url='/login/')
+def watchlist(request):
+    user = request.user.username
+
+    if request.method == 'POST':
+        listing_id = request.POST.get('id')
+        id = Listing.objects.get(id=listing_id)
+        user = User.objects.get(username=user)
+        is_in_watchlist = Watchlist.objects.filter(listing_id=id, user=user)
+        if len(is_in_watchlist):
+            is_in_watchlist.update(
+                watch_bool=not is_in_watchlist[0].watch_bool)
+        else:
+            Watchlist(listing_id=id, user=user).save()
+
+        return redirect(f'/listing/{listing_id}')
+    watchlist = Watchlist.objects.filter(
+        user=User.objects.get(username=user), watch_bool=True)
+    listings = []
+    for item in watchlist:
+        listings.append(item.listing_id)
+    print(listings)
+    return render(request, 'auctions/watchlist.html', {'listings': listings})
