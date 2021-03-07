@@ -1,0 +1,40 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="productdetailbox">
+        <h2>Listing: {{listing.title}}</h2>
+
+        <div class="col-xs-12 fig">
+            {% if listing.image_url %}
+            <img src="{{listing.image_url}}" style="height: 250px; border: 2px solid black; border-radius: 4px;"
+                alt="" />
+            {% else %}
+            <img class="card-img-top" style="padding: 10px;" src="http://www.placekitten.com/270/270"
+                alt="placeholder image">
+            {% endif %}
+        </div>
+        <div class="col-xs-4 fig">
+            <strong>Description:</strong>
+            <p>{{listing.description}}</p>
+        </div>
+        <h4 class="price-kit">
+            ${{listing.starting_bid}}
+        </h4>
+
+        <div>
+            Details
+            <li>
+                Listed at: {{listing.date_listed}}
+            </li>
+            <li>
+                Listed By: {{listing.listed_by}}
+            </li>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}
