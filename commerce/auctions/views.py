@@ -86,12 +86,11 @@ def create(request):
 @login_required(login_url='/login/')
 def listing(request, id):
     user = User.objects.get(username=request.user.username)
-
     listing = Listing.objects.get(id=id)
     is_in_watchlist = Watchlist.objects.filter(listing_id=listing, user=user)
     watched = False
     try:
-        watched = is_in_watchlist[0].is_in_watchlist
+        watched = is_in_watchlist[0].watch_bool
     except:
         pass
 
