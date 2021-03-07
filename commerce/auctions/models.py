@@ -7,6 +7,10 @@ class User(AbstractUser):
     pass
 
 
+class Category(models.Model):
+    category = models.CharField(max_length=255)
+
+
 class Listing(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -16,8 +20,11 @@ class Listing(models.Model):
     date_listed = models.DateTimeField()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     listed_by = models.CharField(max_length=255)
+    category = models.ForeignKey(
+        Category, related_name='listings', blank=True, null=True, on_delete=models.SET_NULL)
 
 
 class Comment(models.Model):
     comment_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
     comment = models.TextField()
