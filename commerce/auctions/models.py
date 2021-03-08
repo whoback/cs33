@@ -38,3 +38,12 @@ class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
     watch_bool = models.BooleanField(default=True)
+
+
+class Bids(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    bid = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self) -> str:
+        return f"user: {self.user}, bid: {self.bid}"
