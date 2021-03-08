@@ -75,8 +75,10 @@ def create(request):
         starting_bid = request.POST.get('bid')
         url = request.POST.get('url')
         listed_by = User.objects.get(username=request.user.username)
+        categories = request.POST.get('categories')
+
         listing = Listing(title=title, description=description,
-                          starting_bid=starting_bid, category=Category.objects.get(name=categories), image_url=url, listed_by=listed_by)
+                          starting_bid=starting_bid, category=Category.objects.get(category=categories), image_url=url, listed_by=listed_by)
         listing.save()
         return redirect('/')
     categories = Category.objects.all()
