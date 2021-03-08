@@ -96,8 +96,9 @@ def listing(request, id):
         watched = is_in_watchlist[0].watch_bool
     except:
         pass
+    bids = Bids.objects.filter(listing_id=id).count()
 
-    return render(request, 'auctions/listing.html', {'listing': listing, 'watched': watched})
+    return render(request, 'auctions/listing.html', {'listing': listing, 'watched': watched, 'bids': bids})
 
 
 @login_required(login_url='/login/')
@@ -144,3 +145,29 @@ def category(request, category_type=None):
         category=Category.objects.get(category=category_type))
 
     return render(request, 'auctions/index.html', {'listings': listings})
+
+
+@login_required(login_url='/login/')
+def bid(request):
+    if request.method == "POST":
+        listing_id = request.POST.get('listing_id')
+        new_bid = request.POST.get('bid')
+        listing = Listing.objects.get(id=listing_id)
+        cur_bid = listing.current_bid
+        num_of_bids = Bids.objects.filter(listing_id=listing_id).count()
+        if num_of_bids == 0:
+            add_bid = Bids(user=User.objects.get(username=request.user.username),
+                           bid=new_bid, listing_id=Listing.objects.get(id=listing_id))
+            add_bid.save()
+
+            return redirect(f'/listing/{listing_id}')
+
+        if int(new_bid) > int(cur_bid):
+            add_bid = Bids(user=User.objects.get(username=request.user.username),
+                           bid=new_bid, listing_id=Listing.objects.get(id=listing_id))
+            add_bid.save()
+
+            Listing.objects.filter(id=listing_id).update(current_bid=bid)
+
+        return redirect(f'/listing/{listing_id}')
+    return HttpResponseRedirect(reverse("index"))

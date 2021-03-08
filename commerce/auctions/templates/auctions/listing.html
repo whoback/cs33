@@ -34,9 +34,21 @@
             <p>{{listing.description}}</p>
         </div>
         <h4 class="price-kit">
+            {% if listing.current_bid == 0 %}
             ${{listing.starting_bid}}
+            {% else %}
+            ${{listing.current_bid}}
+            {% endif %}
         </h4>
-
+        <h4>There are: {{ bids }} bids on this item!</h4>
+        <form action="{% url 'bid' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="hidden" name="listing_id" value="{{listing.id}}">
+                <input class="form-control col-sm-1" type="text" name="bid" placeholder="Bid">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Place Bid">
+        </form>
         <div>
             Details
             <li>
