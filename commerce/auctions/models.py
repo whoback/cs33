@@ -18,7 +18,8 @@ class Listing(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     starting_bid = models.DecimalField(max_digits=6, decimal_places=2)
-    current_bid = models.DecimalField(max_digits=6, decimal_places=2)
+    current_bid = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True)
     image_url = models.URLField()
     date_listed = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

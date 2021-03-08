@@ -11,7 +11,12 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
-                    <strong>Price: $</strong>{{ listing.starting_bid }}
+                    {% if listing.current_bid is None %}
+                    <strong>Price: $</strong>{{listing.starting_bid}}
+                    {% else %}
+                    <strong>Price: $</strong>{{ listing.current_bid }}
+                    {% endif %}
+
                     <br>
                     <strong>Created By: </strong>{{listing.listed_by}}
                     <br>

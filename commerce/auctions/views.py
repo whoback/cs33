@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -97,8 +98,9 @@ def listing(request, id):
     except:
         pass
     bids = Bids.objects.filter(listing_id=id).count()
-
-    return render(request, 'auctions/listing.html', {'listing': listing, 'watched': watched, 'bids': bids})
+    comments = {}
+    comments = Comment.objects.filter(listing_id=id)
+    return render(request, 'auctions/listing.html', {'listing': listing, 'watched': watched, 'bids': bids, 'comments': comments})
 
 
 @login_required(login_url='/login/')
@@ -122,7 +124,6 @@ def watchlist(request):
     listings = []
     for item in watchlist:
         listings.append(item.listing_id)
-    print(listings)
     return render(request, 'auctions/watchlist.html', {'listings': listings})
 
 
@@ -139,7 +140,6 @@ def addcategory(request):
 def category(request, category_type=None):
     if category_type is None:
         category = Category.objects.all()
-        print(category)
         return render(request, 'auctions/category.html', {'category': category})
     listings = Listing.objects.filter(
         category=Category.objects.get(category=category_type))
@@ -161,13 +161,37 @@ def bid(request):
             add_bid.save()
 
             return redirect(f'/listing/{listing_id}')
-
-        if int(new_bid) > int(cur_bid):
+        if cur_bid == None:
+            cur_bid = 0
+        if float(new_bid) > float(cur_bid):
             add_bid = Bids(user=User.objects.get(username=request.user.username),
                            bid=new_bid, listing_id=Listing.objects.get(id=listing_id))
             add_bid.save()
 
-            Listing.objects.filter(id=listing_id).update(current_bid=bid)
+            Listing.objects.filter(id=listing_id).update(current_bid=new_bid)
+
+            return redirect(f'/listing/{listing_id}')
+        else:
+            raise Http404("Bid too low!")
+    return HttpResponseRedirect(reverse("index"))
+
+
+@login_required(login_url='/login/')
+def add_comment(request):
+    if request.method == "POST":
+        listing_id = request.POST.get('listing_id')
+        comment = request.POST.get('comment')
+        user = request.user.username
+
+        id = Listing.objects.get(id=listing_id)
+        if len(Comment.objects.filter(comment_by=User.objects.get(username=user),
+                                      listing_id=listing_id)):
+            Comment.objects.filter(listing_id=id).update(
+                comment=comment)
+
+        else:
+            comment = Comment(listing_id=id, comment=comment,
+                              comment_by=User.objects.get(username=user))
+            comment.save()
 
         return redirect(f'/listing/{listing_id}')
-    return HttpResponseRedirect(reverse("index"))
