@@ -25,6 +25,7 @@ class Listing(models.Model):
     listed_by = models.CharField(max_length=255)
     category = models.ForeignKey(
         Category, related_name='listings', blank=True, null=True, on_delete=models.SET_NULL)
+    active = models.BooleanField(default=True)
 
 
 class Comment(models.Model):
