@@ -76,11 +76,12 @@ def create(request):
         url = request.POST.get('url')
         listed_by = User.objects.get(username=request.user.username)
         listing = Listing(title=title, description=description,
-                          starting_bid=starting_bid, image_url=url, listed_by=listed_by)
+                          starting_bid=starting_bid, category=Category.objects.get(name=categories), image_url=url, listed_by=listed_by)
         listing.save()
         return redirect('/')
+    categories = Category.objects.all()
 
-    return render(request, 'auctions/create.html')
+    return render(request, 'auctions/create.html', {'categories': categories})
 
 
 @login_required(login_url='/login/')
@@ -120,3 +121,24 @@ def watchlist(request):
         listings.append(item.listing_id)
     print(listings)
     return render(request, 'auctions/watchlist.html', {'listings': listings})
+
+
+@login_required(login_url='/login/')
+def addcategory(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        category = Category(category=name)
+        category.save()
+        return HttpResponseRedirect(reverse(create))
+    return render(request, 'auctions/add_category.html')
+
+
+def category(request, category_type=None):
+    if category_type is None:
+        category = Category.objects.all()
+        print(category)
+        return render(request, 'auctions/category.html', {'category': category})
+    listings = Listing.objects.filter(
+        category=Category.objects.get(category=category_type))
+
+    return render(request, 'auctions/index.html', {'listings': listings})

@@ -10,6 +10,9 @@ class User(AbstractUser):
 class Category(models.Model):
     category = models.CharField(max_length=255)
 
+    def __str__(self):
+        return f"{self.category}"
+
 
 class Listing(models.Model):
     title = models.CharField(max_length=255)
