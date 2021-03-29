@@ -1,0 +1,25 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<h2>
+    {{ email.sender }}
+</h2>
+<!-- nav -->
+<hr>
+<div class="row">
+    <strong>From: </strong>{{email.sender}}
+</div>
+<div class="row"><strong>To: </strong>
+    {{ request.user.email }} </div>
+<div class="row"><strong>Subject: </strong>{{ email.subject }}</div>
+<div class="row"><strong>Timestamp: </strong>{{ email.timestamp }}</div>
+
+<hr>
+<div class="row">{{email.body}}</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %}

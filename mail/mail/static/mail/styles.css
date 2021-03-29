@@ -1,3 +1,40 @@
 textarea {
-    min-height: 400px;
+    min-height: 100px;
+    margin: 1rem;
+}
+
+.clickable {
+    cursor: pointer;
+    margin: 4px;
+    padding: 2px;
+}
+
+
+.last{
+    float: right;
+}
+
+.read {
+    background-color: #ebebeb;
+}
+
+.body {
+    margin-top: 2rem;
+    background-color: #f7f7f7;
+    padding: 2rem;
+}
+
+.mailbox-button {
+    margin-bottom: 1.5rem;
+    margin-right: 1rem;
+}
+
+.container {
+    margin-bottom: 2rem;
+}
+
+.action-buttons {
+    float: right;
+    display: flex;
+    flex-direction: row-reverse;
 }
