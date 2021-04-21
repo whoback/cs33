@@ -1,0 +1,4 @@
+.edit{cursor: pointer;}
+.liked{cursor: pointer; width: 20px;}
+.card{background: aliceblue;}
+.card:hover{background: azure;}
