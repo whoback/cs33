@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .models import User, Post, Profile
+from .models import User, Timer, Profile
 from django.core.paginator import Paginator
 
 

@@ -9,12 +9,12 @@ class User(AbstractUser):
 
 
 # add post model
-class Post(models.Model):
+class Timer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.CharField(max_length=500, null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    like = models.ManyToManyField(
-        User,  blank=True, related_name="liked_user")
+    title = models.CharField(max_length=500, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    work_interval = models.IntegerField()
+    rest_interval = models.IntegerField()
 
     def __str__(self):
         return "{self.user.username} -> {self.post}"
@@ -24,10 +24,6 @@ class Post(models.Model):
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    follower = models.ManyToManyField(
-        User,  blank=True, related_name="follower_user")
-    following = models.ManyToManyField(
-        User,  blank=True, related_name="following_user")
 
     def __str__(self):
         return "{self.user.username}"
