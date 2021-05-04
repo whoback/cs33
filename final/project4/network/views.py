@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import User, Timer, Profile
-from django.core.paginator import Paginator
+# from django.core.paginator import Paginator
 
 
 def login_view(request):
@@ -31,17 +31,17 @@ def login_view(request):
 
 
 def index(request):
-    posts = Post.objects.all().order_by('-timestamp')
-    paginator = Paginator(posts, 10)
-    if request.GET.get("page") != None:
-        try:
-            posts = paginator.page(request.GET.get("page"))
-        except:
-            posts = paginator.page(1)
-    else:
-        posts = paginator.page(1)
+    timers = Timer.objects.all().order_by('-created_at')
+    # paginator = Paginator(posts, 10)
+    # if request.GET.get("page") != None:
+    #     try:
+    #         posts = paginator.page(request.GET.get("page"))
+    #     except:
+    #         posts = paginator.page(1)
+    # else:
+    #     posts = paginator.page(1)
 
-    return render(request, 'network/index.html', {'posts': posts})
+    return render(request, 'network/index.html', {'timers': timers})
 
 
 @login_required
@@ -80,141 +80,141 @@ def register(request):
         return render(request, "network/register.html")
 
 
-@login_required
-@csrf_exempt
-def like(request):
-    if request.method == "POST":
-        post_id = request.POST.get('id')
-        is_liked = request.POST.get('is_liked')
-        try:
-            post = Post.objects.get(id=post_id)
-            if is_liked == 'no':
-                post.like.add(request.user)
-                is_liked = 'yes'
-            elif is_liked == 'yes':
-                post.like.remove(request.user)
-                is_liked = 'no'
-            post.save()
+# @login_required
+# @csrf_exempt
+# def like(request):
+#     if request.method == "POST":
+#         post_id = request.POST.get('id')
+#         is_liked = request.POST.get('is_liked')
+#         try:
+#             post = Post.objects.get(id=post_id)
+#             if is_liked == 'no':
+#                 post.like.add(request.user)
+#                 is_liked = 'yes'
+#             elif is_liked == 'yes':
+#                 post.like.remove(request.user)
+#                 is_liked = 'no'
+#             post.save()
 
-            return JsonResponse({'like_count': post.like.count(), 'is_liked': is_liked, "status": 201})
-        except:
-            return JsonResponse({'error': "Post not found", "status": 404})
-    return JsonResponse({}, status=400)
-
-
-@login_required
-@csrf_exempt
-def new_post(request):
-    if request.method == "POST":
-        post = request.POST.get('post')
-        if len(post) != 0:
-            obj = Post()
-            obj.post = post
-            obj.user = request.user
-            obj.save()
-            context = {
-                'status': 201,
-                'post_id': obj.id,
-                'username': request.user.username,
-                'timestamp': obj.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            }
-            return JsonResponse(context, status=201)
-    return JsonResponse({}, status=400)
+#             return JsonResponse({'like_count': post.like.count(), 'is_liked': is_liked, "status": 201})
+#         except:
+#             return JsonResponse({'error': "Post not found", "status": 404})
+#     return JsonResponse({}, status=400)
 
 
-@login_required
-def profile(request, username):
-    try:
-        user = User.objects.get(username=username)
-        profile = Profile.objects.get(user=user)
-        users_profile = Profile.objects.get(user=request.user)
-    except:
-        return render(request, 'network/profile.html', {"error": True})
-    posts = Post.objects.filter(user=user).order_by('-timestamp')
-    paginator = Paginator(posts, 10)
-    if request.GET.get("page") != None:
-        try:
-            posts = paginator.page(request.GET.get("page"))
-        except:
-            posts = paginator.page(1)
-    else:
-        posts = paginator.page(1)
-    for i in users_profile.follower.all():
-        print(i)
-    context = {
-        'posts': posts,
-        "user": user,
-        "profile": profile,
-        'users_profile': users_profile
-    }
-    return render(request, 'network/profile.html', context)
+# @login_required
+# @csrf_exempt
+# def new_post(request):
+#     if request.method == "POST":
+#         post = request.POST.get('post')
+#         if len(post) != 0:
+#             obj = Post()
+#             obj.post = post
+#             obj.user = request.user
+#             obj.save()
+#             context = {
+#                 'status': 201,
+#                 'post_id': obj.id,
+#                 'username': request.user.username,
+#                 'timestamp': obj.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+#             }
+#             return JsonResponse(context, status=201)
+#     return JsonResponse({}, status=400)
 
 
-@login_required
-def following(request):
-    following = Profile.objects.get(user=request.user).following.all()
-    posts = Post.objects.filter(user__in=following).order_by('-timestamp')
-    paginator = Paginator(posts, 10)
-    if request.GET.get("page") != None:
-        try:
-            posts = paginator.page(request.GET.get("page"))
-        except:
-            posts = paginator.page(1)
-    else:
-        posts = paginator.page(1)
-    return render(request, 'network/following.html', {'posts': posts})
+# @login_required
+# def profile(request, username):
+#     try:
+#         user = User.objects.get(username=username)
+#         profile = Profile.objects.get(user=user)
+#         users_profile = Profile.objects.get(user=request.user)
+#     except:
+#         return render(request, 'network/profile.html', {"error": True})
+#     posts = Post.objects.filter(user=user).order_by('-timestamp')
+#     paginator = Paginator(posts, 10)
+#     if request.GET.get("page") != None:
+#         try:
+#             posts = paginator.page(request.GET.get("page"))
+#         except:
+#             posts = paginator.page(1)
+#     else:
+#         posts = paginator.page(1)
+#     for i in users_profile.follower.all():
+#         print(i)
+#     context = {
+#         'posts': posts,
+#         "user": user,
+#         "profile": profile,
+#         'users_profile': users_profile
+#     }
+#     return render(request, 'network/profile.html', context)
 
 
-@login_required
-@csrf_exempt
-def edit_post(request):
-    if request.method == "POST":
-        post_id = request.POST.get('id')
-        new_post = request.POST.get('post')
-        try:
-            post = Post.objects.get(id=post_id)
-            if post.user == request.user:
-                post.post = new_post.strip()
-                post.save()
-                return JsonResponse({}, status=201)
-        except:
-            return JsonResponse({}, status=404)
-
-    return JsonResponse({}, status=400)
+# @login_required
+# def following(request):
+#     following = Profile.objects.get(user=request.user).following.all()
+#     posts = Post.objects.filter(user__in=following).order_by('-timestamp')
+#     paginator = Paginator(posts, 10)
+#     if request.GET.get("page") != None:
+#         try:
+#             posts = paginator.page(request.GET.get("page"))
+#         except:
+#             posts = paginator.page(1)
+#     else:
+#         posts = paginator.page(1)
+#     return render(request, 'network/following.html', {'posts': posts})
 
 
-@login_required
-@csrf_exempt
-def follow(request):
-    if request.method == "POST":
-        user = request.POST.get('user')
-        action = request.POST.get('action')
-# follow and unfollow users
-        if action == 'Follow':
-            try:
-                user = User.objects.get(username=user)
-                profile = Profile.objects.get(user=request.user)
-                profile.following.add(user)
-                profile.save()
+# @login_required
+# @csrf_exempt
+# def edit_post(request):
+#     if request.method == "POST":
+#         post_id = request.POST.get('id')
+#         new_post = request.POST.get('post')
+#         try:
+#             post = Post.objects.get(id=post_id)
+#             if post.user == request.user:
+#                 post.post = new_post.strip()
+#                 post.save()
+#                 return JsonResponse({}, status=201)
+#         except:
+#             return JsonResponse({}, status=404)
 
-                profile = Profile.objects.get(user=user)
-                profile.follower.add(request.user)
-                profile.save()
-                return JsonResponse({'status': 201, 'action': "Unfollow", "follower_count": profile.follower.count()}, status=201)
-            except:
-                return JsonResponse({}, status=404)
-        else:
-            try:
-                user = User.objects.get(username=user)
-                profile = Profile.objects.get(user=request.user)
-                profile.following.remove(user)
-                profile.save()
+#     return JsonResponse({}, status=400)
 
-                profile = Profile.objects.get(user=user)
-                profile.follower.remove(request.user)
-                profile.save()
-                return JsonResponse({'status': 201, 'action': "Follow", "follower_count": profile.follower.count()}, status=201)
-            except:
-                return JsonResponse({}, status=404)
 
-    return JsonResponse({}, status=400)
+# @login_required
+# @csrf_exempt
+# def follow(request):
+#     if request.method == "POST":
+#         user = request.POST.get('user')
+#         action = request.POST.get('action')
+# # follow and unfollow users
+#         if action == 'Follow':
+#             try:
+#                 user = User.objects.get(username=user)
+#                 profile = Profile.objects.get(user=request.user)
+#                 profile.following.add(user)
+#                 profile.save()
+
+#                 profile = Profile.objects.get(user=user)
+#                 profile.follower.add(request.user)
+#                 profile.save()
+#                 return JsonResponse({'status': 201, 'action': "Unfollow", "follower_count": profile.follower.count()}, status=201)
+#             except:
+#                 return JsonResponse({}, status=404)
+#         else:
+#             try:
+#                 user = User.objects.get(username=user)
+#                 profile = Profile.objects.get(user=request.user)
+#                 profile.following.remove(user)
+#                 profile.save()
+
+#                 profile = Profile.objects.get(user=user)
+#                 profile.follower.remove(request.user)
+#                 profile.save()
+#                 return JsonResponse({'status': 201, 'action': "Follow", "follower_count": profile.follower.count()}, status=201)
+#             except:
+#                 return JsonResponse({}, status=404)
+
+#     return JsonResponse({}, status=400)
