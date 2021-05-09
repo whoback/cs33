@@ -59,17 +59,20 @@
         const delete_btn = document.getElementById("delete");
         delete_btn.addEventListener("click", function (e) {
             e.preventDefault()
-            fetch('/timer/delete/{{timer.id}}', {
-                method: 'DELETE',
-            })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.error !== undefined) {
-                        alert(result.error)
-                    } else {
-                        window.location.replace("/")
-                    }
-                });
+            if (window.confirm("Do you really want to delete this timer?")) {
+
+                fetch('/timer/delete/{{timer.id}}', {
+                    method: 'DELETE',
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.error !== undefined) {
+                            alert(result.error)
+                        } else {
+                            window.location.replace("/")
+                        }
+                    });
+            }
         });
 
         // start of timer code
