@@ -61,10 +61,12 @@ Users can take the following actions:
 
 <b>Timer</b> functionality was created entirely by me. Users can create a new timer, edit an existing timer, use and view their existing timers, and delete any timer in their account. All functions from above are available via UI elements.
 
-Default sounds are included for use in each timer. Alternativley, users can provide a URL to their own mp3 or wav file. I validate the URL strucutre but do not check to see if the filetype conforms since `HTML AudioElements` support a large number of codecs. I assume the use of popular filetypes like `WAV` and `mp3`
+Default sounds are included for use in each timer. Alternatively, users can provide a URL to their own mp3 or wav file. I validate the URL structure but do not check to see if the filetype conforms since `HTML AudioElements` support a large number of codecs. I assume the use of popular filetypes like `WAV` and `mp3`
 
 Originally I had planned on supporting uploads and doing file edits on sounds but that proved to be much larger in scope than anticipated. 
 
-All form validataion is done on the frontend using JavaScript. This is because we're using JS to fetch API call results and not acutally submitting a form.
+All form validation is done on the frontend using JavaScript. This is because we're using JS to fetch API call results and not actually submitting a form.
 
 In the instance a user tries to submit an incomplete `Timer` form I throw an `alert` with an error message. I chose to not replace the system alert box with anything from Bootstrap since it works so well on mobile. The same is true for the `window.confirm` dialog thrown when a user decides to delete a timer. 
+
+I represent changes in work and rest intervals visually. Originally I had planned to have a beep sound play when an interval was over but the unpredictability of sound playback on mobile had me rethink that decision. 
