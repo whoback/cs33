@@ -1,0 +1,125 @@
+{% extends "network/layout.html" %} {% block body %}
+<div class="container">
+    <div class="card text-center m-auto ">
+
+        <div class="card-header" style="background-color: #A8DADC;">
+            Edit your timer </div>
+        <div class="card-body">
+
+            <form id="formElem">
+                <div class="form-group m-3">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" aria-describedby="emailHelp"
+                        value="{{timer.title}}" required>
+                </div>
+                <div class="form-group m-3">
+                    <label for="work_interval">Work Interval</label>
+                    <input type="text" class="form-control" id="work_interval" value="{{timer.work_interval}}" required>
+                </div>
+                <div class="form-group m-3">
+                    <label for="rest_interval">Rest Interval</label>
+                    <input type="text" class="form-control" id="rest_interval" value="{{timer.rest_interval}}" required>
+                </div>
+                <div class="form-group m-3">
+                    <label for="reps">Repititions</label>
+                    <select class="form-select" id="reps">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group m-3">
+                    <label for="sound">What sound should play when the timer is over?</label>
+                    <select class="form-select" id="sound">
+                        <option value="0" selected>Bell (Default)</option>
+                        <option value="1">Car Horn</option>
+                        <option value="2">Siren</option>
+                    </select>
+                </div>
+                <div class="form-group m-3">
+                    <label for="custom_sound">Use a custom ending sound?</label>
+                    <input type="text" class="form-control" id="custom_sound"
+                        placeholder="Enter URL of your custom mp3 or wav file." required>
+                </div>
+                <button type="submit" id="submit_btn" class="btn btn-success m-3">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // credit: https://stackoverflow.com/questions/3937513/javascript-validation-for-empty-input-field
+    function isEmpty(str) {
+        return !str.trim().length;
+    }
+    // credit: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+    function validURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+        return !!pattern.test(str);
+    }
+
+    function setSoundURL(s) {
+        switch (s) {
+            case "0":
+                sound = "https://www.e2s.com/system/1/assets/files/000/000/423/423/854c33e83/original/TF050.WAV"
+                break;
+            case "1":
+                sound = "https://www.e2s.com/system/1/assets/files/000/000/411/411/491442314/original/TF046.WAV"
+                break;
+            case "2":
+                sound = "https://www.e2s.com/system/1/assets/files/000/000/416/416/0c52c2259/original/TF048.WAV"
+            default:
+        }
+    }
+    submit_btn = document.querySelector("#submit_btn");
+    submit_btn.addEventListener("click", function (e) {
+        e.preventDefault()
+        form = document.querySelector("#formElem")
+        title = form.querySelector("#title").value
+        work_interval = form.querySelector("#work_interval").value
+        rest_interval = form.querySelector("#rest_interval").value
+        repititions = form.querySelector("#reps").value
+        sound = form.querySelector("#sound").value
+
+        // check for custom sound
+        custom = form.querySelector("#custom_sound").value
+        if (!isEmpty(custom)) {
+            if (validURL(custom)) {
+                sound = custom
+            }
+        }
+        if (isEmpty(title) || isEmpty(work_interval) || isEmpty(rest_interval)) {
+            alert("Please fill out all fields!")
+        } else {
+            setSoundURL(sound);
+            fetch('/timer/edit/{{timer.id}}', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    title: title,
+                    work_interval: work_interval,
+                    rest_interval: rest_interval,
+                    repititions: repititions,
+                    sound: sound
+                })
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error !== undefined) {
+                        alert(result.error)
+                    } else {
+                        window.location.replace("/")
+                    }
+                });
+        }
+
+
+    });
+</script>
+{%endblock%}

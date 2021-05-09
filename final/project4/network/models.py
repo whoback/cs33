@@ -12,12 +12,20 @@ class User(AbstractUser):
 class Timer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=500, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     work_interval = models.IntegerField()
     rest_interval = models.IntegerField()
+    repititions = models.IntegerField(default=1)
+    sound = models.CharField(max_length=500, null=True, blank=True)
 
-    def __str__(self):
-        return "{self.user.username} -> {self.post}"
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "work_interval": self.work_interval,
+            "rest_interval": self.rest_interval,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+        }
 
 # add profile model
 

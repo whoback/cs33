@@ -1,0 +1,152 @@
+{% extends "network/layout.html" %}
+{% block body %}
+<div class="container">
+    <div class="card text-center">
+
+        <div class="card-header" style="background-color: #A8DADC;">
+            Timer </div>
+        <div class="card-body">
+            <h5 class="card-title">Timer: {{timer.title}}
+            </h5>
+            <p class="card-text">
+                <label for="work_interval">Work Interval &#8594;
+                </label>
+                <input id="work_interval" type="text" readonly value="{{timer.work_interval}}"
+                    style="border-radius: 10px; width:50px; text-align: center;">
+            </p>
+            <p class="card-text">
+                <label for="rest_interval">Rest Interval &#8594;
+                </label>
+
+                <input id="rest_interval" type="text" readonly value="{{timer.rest_interval}}"
+                    style="border-radius: 10px; width:50px; text-align: center;">
+            </p>
+            <p class="card-text">
+                <label for="repititions">Repititions &#8594;
+                </label>
+                <input id="repititions" type="text" readonly value="{{timer.repititions}}"
+                    style="border-radius: 10px; width:50px; text-align: center;">
+            </p>
+            <div class="countdown">
+                <p id="work" class="d-none display-2 bg-danger">Work!</p>
+                <p id="rest" class="d-none display-2 bg-warning">Rest!</p>
+                <p id="done" class="d-none display-2 bg-success">Good job!</p>
+                <p id="countdown" class="display-1"><span id="countdown_span"></span></p>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" id="start" class="btn btn-success mx-1">Start</button>
+                <button type="button" id="pause" class="btn btn-secondary mx-1">Pause</button>
+                <button type="button" id="reset" class="btn btn-warning mx-1">Reset</button>
+            </div>
+
+
+        </div>
+        <div class="card-footer text-muted m-3">
+            Created at: {{timer.timestamp}}
+            <div class="d-grid gap-2 d-md-flex mt-3 justify-content-md-center">
+                <a class="btn btn-sm btn-warning me-md-2" href="/timer/edit/{{timer.id}}">Edit</a>
+                <a class="btn btn-sm btn-danger" id="delete" href="#">Delete</a>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<script>
+    window.onload = function () {
+        // handle deleting current timer
+        const delete_btn = document.getElementById("delete");
+        delete_btn.addEventListener("click", function (e) {
+            e.preventDefault()
+            fetch('/timer/delete/{{timer.id}}', {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error !== undefined) {
+                        alert(result.error)
+                    } else {
+                        window.location.replace("/")
+                    }
+                });
+        });
+
+        // start of timer code
+        const start_btn = document.getElementById("start");
+        const pause_btn = document.getElementById("pause");
+        const reset_btn = document.getElementById("reset");
+        // lets do the work with numbers and not strings
+        const initial_work_seconds = Math.floor('{{timer.work_interval}}' * 1)
+        const initial_rest_seconds = Math.floor('{{timer.rest_interval}}' * 1)
+        let timer;
+        let work_seconds = initial_work_seconds
+        let countdown_seconds = document.getElementById("countdown_span")
+        countdown_seconds.innerText = initial_work_seconds
+        let reps = Math.floor('{{timer.repititions}}' * 1)
+        let is_rest = true
+
+        // hack for mobile
+        // generate el
+        // trigger playback of empty el
+        // as timer ends attach src and then play
+
+        let audioElement = new Audio();
+
+        start_btn.onclick = function () {
+            is_rest = false
+            start_btn.classList.add("disabled")
+            timer = setInterval(handle_timer, 1000)
+            document.getElementById("work").classList.remove("d-none")
+
+            // part of hack for mobile sound playback
+            audioElement.play()
+            // change to actual source
+            audioElement.src = '{{timer.sound}}'
+            // now load so mobile plays when interval is over
+            audioElement.load()
+        }
+
+        function handle_timer() {
+            work_seconds -= 1
+            countdown_seconds.innerText = work_seconds
+            change_state()
+
+        }
+        function play_audio() {
+            audioElement.play();
+        }
+        pause_btn.onclick = function () {
+            clearInterval(timer)
+            start_btn.classList.remove("disabled")
+        }
+        reset_btn.onclick = function () {
+            window.location.reload()
+        }
+        function change_state() {
+            // completed a work interval
+            if (work_seconds == 0 && is_rest == false) {
+                work_seconds = initial_rest_seconds + 1
+                is_rest = true
+                reps -= 1
+                document.getElementById("work").classList.add("d-none")
+                document.getElementById("rest").classList.remove("d-none")
+            }
+            // completed a rest interval
+            else if (work_seconds == 0 && is_rest == true) {
+                work_seconds = initial_work_seconds + 1
+                is_rest = false
+                document.getElementById("rest").classList.add("d-none")
+                document.getElementById("work").classList.remove("d-none")
+                if (reps == 0) {
+                    clearInterval(timer)
+                    play_audio()
+                    document.getElementById("work").classList.add("d-none")
+                    document.getElementById("done").classList.remove("d-none")
+                }
+            }
+
+        }
+    }
+</script>
+{% endblock %}

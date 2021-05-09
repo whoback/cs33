@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import User, Timer, Profile
-# from django.core.paginator import Paginator
+import json
 
 
 def login_view(request):
@@ -31,17 +31,10 @@ def login_view(request):
 
 
 def index(request):
-    timers = Timer.objects.all().order_by('-created_at')
-    # paginator = Paginator(posts, 10)
-    # if request.GET.get("page") != None:
-    #     try:
-    #         posts = paginator.page(request.GET.get("page"))
-    #     except:
-    #         posts = paginator.page(1)
-    # else:
-    #     posts = paginator.page(1)
-
-    return render(request, 'network/index.html', {'timers': timers})
+    if request.user.is_authenticated:
+        timers = Timer.objects.filter(user=request.user).order_by('-timestamp')
+        return render(request, 'network/index.html', {'timers': timers})
+    return render(request, 'network/index.html')
 
 
 @login_required
@@ -80,141 +73,100 @@ def register(request):
         return render(request, "network/register.html")
 
 
-# @login_required
-# @csrf_exempt
-# def like(request):
-#     if request.method == "POST":
-#         post_id = request.POST.get('id')
-#         is_liked = request.POST.get('is_liked')
-#         try:
-#             post = Post.objects.get(id=post_id)
-#             if is_liked == 'no':
-#                 post.like.add(request.user)
-#                 is_liked = 'yes'
-#             elif is_liked == 'yes':
-#                 post.like.remove(request.user)
-#                 is_liked = 'no'
-#             post.save()
+@login_required
+@csrf_exempt
+def create_new_timer(request):
+    if request.method == "POST":
+        # grab data from request
+        timer_data = json.loads(request.body)
+        title = timer_data.get("title")
+        work_interval = timer_data.get("work_interval")
+        rest_interval = timer_data.get("rest_interval")
+        repititions = timer_data.get("repititions")
+        sound = timer_data.get("sound")
 
-#             return JsonResponse({'like_count': post.like.count(), 'is_liked': is_liked, "status": 201})
-#         except:
-#             return JsonResponse({'error': "Post not found", "status": 404})
-#     return JsonResponse({}, status=400)
+        # create and save new timer
+        obj = Timer()
+        obj.title = title
+        obj.work_interval = work_interval
+        obj.rest_interval = rest_interval
+        obj.user = request.user
+        obj.repititions = repititions
+        obj.sound = sound
+        obj.save()
 
-
-# @login_required
-# @csrf_exempt
-# def new_post(request):
-#     if request.method == "POST":
-#         post = request.POST.get('post')
-#         if len(post) != 0:
-#             obj = Post()
-#             obj.post = post
-#             obj.user = request.user
-#             obj.save()
-#             context = {
-#                 'status': 201,
-#                 'post_id': obj.id,
-#                 'username': request.user.username,
-#                 'timestamp': obj.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-#             }
-#             return JsonResponse(context, status=201)
-#     return JsonResponse({}, status=400)
+        context = {
+            'msg': 'success',
+            't': 'saved',
+        }
+        return JsonResponse(context, status=201)
+    return render(request, "network/create_new_timer.html")
 
 
-# @login_required
-# def profile(request, username):
-#     try:
-#         user = User.objects.get(username=username)
-#         profile = Profile.objects.get(user=user)
-#         users_profile = Profile.objects.get(user=request.user)
-#     except:
-#         return render(request, 'network/profile.html', {"error": True})
-#     posts = Post.objects.filter(user=user).order_by('-timestamp')
-#     paginator = Paginator(posts, 10)
-#     if request.GET.get("page") != None:
-#         try:
-#             posts = paginator.page(request.GET.get("page"))
-#         except:
-#             posts = paginator.page(1)
-#     else:
-#         posts = paginator.page(1)
-#     for i in users_profile.follower.all():
-#         print(i)
-#     context = {
-#         'posts': posts,
-#         "user": user,
-#         "profile": profile,
-#         'users_profile': users_profile
-#     }
-#     return render(request, 'network/profile.html', context)
+@login_required
+def timer(request, timer_id):
+    try:
+        timer = Timer.objects.get(user=request.user, id=timer_id)
+    except Timer.DoesNotExist:
+        return JsonResponse({"error": "Timer not found."}, status=404)
+
+    # Return timer data
+    if request.method == "GET":
+        context = {
+            'timer': timer,
+        }
+        return render(request, "network/timer.html", context)
 
 
-# @login_required
-# def following(request):
-#     following = Profile.objects.get(user=request.user).following.all()
-#     posts = Post.objects.filter(user__in=following).order_by('-timestamp')
-#     paginator = Paginator(posts, 10)
-#     if request.GET.get("page") != None:
-#         try:
-#             posts = paginator.page(request.GET.get("page"))
-#         except:
-#             posts = paginator.page(1)
-#     else:
-#         posts = paginator.page(1)
-#     return render(request, 'network/following.html', {'posts': posts})
+@login_required
+@csrf_exempt
+def edit_timer(request, timer_id):
+    try:
+        timer = Timer.objects.get(user=request.user, id=timer_id)
+    except Timer.DoesNotExist:
+        return JsonResponse({"error": "Timer not found."}, status=404)
+
+    if request.method == "PUT":
+        # grab data from request
+        timer_data = json.loads(request.body)
+        title = timer_data.get("title")
+        work_interval = timer_data.get("work_interval")
+        rest_interval = timer_data.get("rest_interval")
+        repititions = timer_data.get("repititions")
+        sound = timer_data.get("sound")
+
+        # update and save timer
+        timer.title = title
+        timer.work_interval = work_interval
+        timer.rest_interval = rest_interval
+        timer.repititions = repititions
+        timer.sound = sound
+        timer.save()
+
+        context = {
+            'msg': 'success',
+            't': 'saved',
+        }
+        return JsonResponse(context, status=201)
+    if request.method == "GET":
+        context = {
+            'timer': timer,
+        }
+    return render(request, "network/edit_timer.html", context)
 
 
-# @login_required
-# @csrf_exempt
-# def edit_post(request):
-#     if request.method == "POST":
-#         post_id = request.POST.get('id')
-#         new_post = request.POST.get('post')
-#         try:
-#             post = Post.objects.get(id=post_id)
-#             if post.user == request.user:
-#                 post.post = new_post.strip()
-#                 post.save()
-#                 return JsonResponse({}, status=201)
-#         except:
-#             return JsonResponse({}, status=404)
-
-#     return JsonResponse({}, status=400)
-
-
-# @login_required
-# @csrf_exempt
-# def follow(request):
-#     if request.method == "POST":
-#         user = request.POST.get('user')
-#         action = request.POST.get('action')
-# # follow and unfollow users
-#         if action == 'Follow':
-#             try:
-#                 user = User.objects.get(username=user)
-#                 profile = Profile.objects.get(user=request.user)
-#                 profile.following.add(user)
-#                 profile.save()
-
-#                 profile = Profile.objects.get(user=user)
-#                 profile.follower.add(request.user)
-#                 profile.save()
-#                 return JsonResponse({'status': 201, 'action': "Unfollow", "follower_count": profile.follower.count()}, status=201)
-#             except:
-#                 return JsonResponse({}, status=404)
-#         else:
-#             try:
-#                 user = User.objects.get(username=user)
-#                 profile = Profile.objects.get(user=request.user)
-#                 profile.following.remove(user)
-#                 profile.save()
-
-#                 profile = Profile.objects.get(user=user)
-#                 profile.follower.remove(request.user)
-#                 profile.save()
-#                 return JsonResponse({'status': 201, 'action': "Follow", "follower_count": profile.follower.count()}, status=201)
-#             except:
-#                 return JsonResponse({}, status=404)
-
-#     return JsonResponse({}, status=400)
+@login_required
+@csrf_exempt
+def delete_timer(request, timer_id):
+    try:
+        timer = Timer.objects.filter(user=request.user, id=timer_id)
+    except Timer.DoesNotExist:
+        return JsonResponse({"error": "Timer not found."}, status=404)
+    if request.method == "DELETE":
+        timer.delete()
+        context = {
+            'msg': 'success',
+            't': 'saved',
+        }
+        return JsonResponse(context, status=201)
+    return render(request, 'network/index.html')
